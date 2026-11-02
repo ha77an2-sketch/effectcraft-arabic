@@ -10712,7 +10712,9 @@ mod tests {
     #[test]
     fn every_row_is_used_by_a_converted_panel() {
         // Arabic's table also holds effect parameters and text matched as it is drawn (`crate::rtl`).
-        for (en, _) in ROWS.iter().filter(|(code, _)| *code != "ar").flat_map(|(_, rows)| rows.iter().copied()) {
+        // This edition's toolbar has no Discord pill or website button; the rows stay for upstream.
+        const REMOVED: [&str; 3] = ["Discord", "Join the ArtCraft community on Discord", "EffectCraft on getartcraft.com"];
+        for (en, _) in ROWS.iter().filter(|(code, _)| *code != "ar").flat_map(|(_, rows)| rows.iter().copied()).filter(|(en, _)| !REMOVED.contains(en)) {
             let plain = format!("tr({en:?})");
             let formatted = format!("tr_args({en:?}");
             let bare = format!("{en:?}");

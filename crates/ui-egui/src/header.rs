@@ -5,7 +5,7 @@ use crate::i18n::{tr, tr_args};
 use egui::{Align2, Color32, Rect, Sense, Stroke, StrokeKind, pos2, vec2};
 use serde_json::json;
 
-use crate::icons::{self, Icon};
+use crate::icons::Icon;
 use crate::state::Tool;
 use crate::theme::Tokens;
 use crate::widgets;
@@ -300,14 +300,13 @@ fn right_side(app: &mut EffectcraftApp, ui: &mut egui::Ui, p: &egui::Painter, re
 /// pill or website button: support for it is its own repository's, not the ArtCraft team's.
 fn community_buttons(app: &mut EffectcraftApp, ui: &mut egui::Ui, _p: &egui::Painter, mut rx: f32, cy: f32) -> f32 {
     let t = app.tokens;
-    for (id, icon, tip, cmd) in [("hdr-github", Icon::Code, "EffectCraft on GitHub", "help.github")] {
-        let r = Rect::from_min_max(pos2(rx - 26.0, cy - 13.0), pos2(rx, cy + 13.0));
-        if widgets::icon_button(ui, r, icon, false, &t, egui::Id::unique(id)).on_hover_text(tip).clicked() {
-            let _ = app.session.execute(cmd, json!({}));
-        }
-        app.auto.add(&format!("header.{}", &id[4..]), r, tip);
-        rx = r.min.x - 4.0;
+    let tip = "EffectCraft on GitHub";
+    let r = Rect::from_min_max(pos2(rx - 26.0, cy - 13.0), pos2(rx, cy + 13.0));
+    if widgets::icon_button(ui, r, Icon::Code, false, &t, egui::Id::unique("hdr-github")).on_hover_text(tip).clicked() {
+        let _ = app.session.execute("help.github", json!({}));
     }
+    app.auto.add("header.github", r, tip);
+    rx = r.min.x - 4.0;
     rx
 }
 
