@@ -55,6 +55,7 @@ const ROWS: &[(&str, &[(&str, &str)])] = &[
     ("ka", GEORGIAN_PANELS),
     ("sv", SWEDISH),
     ("fr", FRENCH),
+    ("ar", super::arabic::PANELS),
 ];
 
 /// The catalog for `language`, indexed by English source (built on first use: panels translate
@@ -71,6 +72,7 @@ fn catalog(language: &str) -> Option<&'static Index> {
     static KA: OnceLock<Index> = OnceLock::new();
     static SV: OnceLock<Index> = OnceLock::new();
     static FR: OnceLock<Index> = OnceLock::new();
+    static AR: OnceLock<Index> = OnceLock::new();
     let (index, rows) = match language {
         "ja" => (&JA, JAPANESE),
         "zh-hans" => (&HANS, SIMPLIFIED_CHINESE),
@@ -84,6 +86,7 @@ fn catalog(language: &str) -> Option<&'static Index> {
         // Georgian also reads its own rows for text the other catalogs don't have yet.
         "ka" => return Some(KA.get_or_init(|| GEORGIAN.iter().chain(GEORGIAN_PANELS).copied().collect())),
         "sv" => (&SV, SWEDISH),
+        "ar" => (&AR, super::arabic::PANELS),
         _ => return None,
     };
     Some(index.get_or_init(|| rows.iter().copied().collect()))
@@ -10708,7 +10711,8 @@ mod tests {
 
     #[test]
     fn every_row_is_used_by_a_converted_panel() {
-        for (en, _) in catalogs() {
+        // Arabic's table also holds effect parameters and text matched as it is drawn (`crate::rtl`).
+        for (en, _) in ROWS.iter().filter(|(code, _)| *code != "ar").flat_map(|(_, rows)| rows.iter().copied()) {
             let plain = format!("tr({en:?})");
             let formatted = format!("tr_args({en:?}");
             let bare = format!("{en:?}");

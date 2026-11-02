@@ -273,6 +273,8 @@ fn phase_layout(app: &mut EffectcraftApp, ui: &mut egui::Ui, rect: Rect, v: &mut
     // Bottom control bar.
     let bar_h = 36.0;
     let bar = Rect::from_min_max(pos2(rect.min.x, rect.max.y - bar_h), rect.max);
+    // The composition is a picture: it and its overlays keep their direction, its toolbar mirrors.
+    crate::rtl::keep(ui, Rect::from_min_max(rect.min, pos2(rect.max.x, bar.min.y)));
     // The expression error bar sits above the control bar while expressions fail.
     let err_h = super::expr_bar::height(app, &ctx, cid);
     let err_bar = Rect::from_min_max(pos2(rect.min.x, bar.min.y - err_h), pos2(rect.max.x, bar.min.y));

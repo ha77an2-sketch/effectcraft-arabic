@@ -5,6 +5,8 @@
 
 use crate::EffectcraftApp;
 
+/// The Arabic catalogs, generated together so their terminology stays consistent.
+mod arabic;
 /// Effect names, keyed by effect id (#821).
 pub(crate) mod effects;
 /// Translations for the panels, tooltips and dialogs below the menu bar (see the module docs).
@@ -15,7 +17,7 @@ pub(crate) use ui::catalog_characters;
 pub(crate) use ui::{set_current, tr, tr_args};
 
 /// Every language with a catalog, in the order Settings ▸ General ▸ Language lists them.
-const CATALOG_CODES: [&str; 13] = ["cs", "de", "es", "fr", "pl", "pt-br", "sv", "ru", "uk", "ka", "ja", "zh-hans", "zh-hant"];
+const CATALOG_CODES: [&str; 14] = ["cs", "de", "es", "fr", "pl", "pt-br", "sv", "ru", "uk", "ka", "ja", "zh-hans", "zh-hant", "ar"];
 
 /// The active interface language: the stored preference when it names a catalog, otherwise `en`
 /// (English is the source of every label and needs no lookup).
@@ -81,6 +83,72 @@ pub(crate) fn swedish(app: &EffectcraftApp) -> bool {
     language(app) == "sv"
 }
 
+/// The UI is in Arabic.
+pub(crate) fn arabic(app: &EffectcraftApp) -> bool {
+    language(app) == "ar"
+}
+
+/// Does `language` read right to left? The window is mirrored for it (see `crate::rtl`).
+pub(crate) fn right_to_left(language: &str) -> bool {
+    language == "ar"
+}
+
+/// The Arabic for text a panel drew in English, or `None` when it has no row: `text` itself, then
+/// with the form's trailing `:` or ellipsis set aside, then a `File ▸ New`-style path part by part.
+/// Reached from `crate::rtl`, for literals that no panel routes through [`tr`].
+pub(crate) fn drawn_text(text: &str) -> Option<String> {
+    let exact = tr(text);
+    if exact != text {
+        return Some(exact.to_string());
+    }
+    for tail in [":", "…", "..."] {
+        if let Some(stem) = text.strip_suffix(tail) {
+            let translated = tr(stem);
+            if translated != stem {
+                return Some(format!("{translated}{tail}"));
+            }
+        }
+    }
+    for separator in [" ▸ ", " > "] {
+        let parts: Vec<&str> = text.split(separator).collect();
+        if parts.len() > 1 && parts.iter().any(|part| tr(part) != *part) {
+            return Some(parts.iter().map(|part| tr(part)).collect::<Vec<_>>().join(separator));
+        }
+    }
+    // Readouts built around numbers have no row of their own.
+    if text.chars().any(|c| c.is_ascii_digit()) && DRAWN_FRAGMENTS.iter().any(|(en, _)| text.contains(en)) {
+        return Some(DRAWN_FRAGMENTS.iter().fold(text.to_string(), |out, (en, ar)| out.replace(en, ar)));
+    }
+    None
+}
+
+/// The wording of number-carrying readouts, applied by [`drawn_text`] to text with a digit in it.
+const DRAWN_FRAGMENTS: &[(&str, &str)] = &[
+    (" per second", " في الثانية"),
+    (" fps", " إطار/ث"),
+    (" min", " دقيقة"),
+    (" of ", " من "),
+    (" commands", " أمر"),
+    (" Essential Graphics controls", " من عناصر تحكم الرسوم الأساسية"),
+    (" frames cached", " إطار مخزن مؤقتًا"),
+    ("Duration: ", "المدة: "),
+    ("Version ", "الإصدار "),
+    ("Message: ", "الرسالة: "),
+    (" done", " مكتمل"),
+    ("Renders Started: ", "عمليات التصيير: "),
+    ("Total Time Elapsed: ", "الوقت المنقضي: "),
+    ("Motion graphics & VFX in pure Rust", "الرسوم المتحركة والمؤثرات البصرية بلغة Rust الخالصة"),
+    ("Full (", "كاملة ("),
+    ("In: ", "الدخول: "),
+    ("Out: ", "الخروج: "),
+];
+
+/// `options` as the interface draws them: a popup property's option names, stored in English in
+/// the project and matched by index, so only the drawing goes through the catalog.
+pub(crate) fn tr_all(options: &[String]) -> Vec<String> {
+    options.iter().map(|option| tr(option).to_string()).collect()
+}
+
 /// Settings ▸ General ▸ Language ▸ Match System: the operating system's interface language
 /// where EffectCraft has it, else English (#229), as After Effects installs in the system's
 /// language. The browser build follows the locales its page passes in ([`set_system_locales`]).
@@ -128,7 +196,7 @@ fn first_supported(requested: Option<&str>, browser: &[String], drawable: impl F
 /// rather than draw boxes; `?lang=` and a language chosen in Settings still select them.
 #[cfg_attr(not(target_arch = "wasm32"), allow(dead_code))]
 fn web_draws(language: &str) -> bool {
-    !matches!(language, "ja" | "zh-hans" | "zh-hant" | "ka")
+    !matches!(language, "ja" | "zh-hans" | "zh-hant" | "ka" | "ar")
 }
 
 /// The language EffectCraft shows for a BCP 47 locale (`ja-JP` → `ja`, `zh-Hans-CN` → `zh-hans`,
@@ -150,6 +218,7 @@ fn supported(locale: Option<&str>) -> &'static str {
         "de" => "de",
         "fr" => "fr",
         "sv" => "sv",
+        "ar" => "ar",
         // The only Portuguese catalog: Brazil's, also for Portugal rather than English.
         "pt" => "pt-br",
         "zh" => {
@@ -176,6 +245,7 @@ const REVEAL_FINDER: &[(&str, &str, &str)] = &[
     ("pt-br", "Mostrar no Explorador", "Mostrar no gerenciador de arquivos"),
     ("fr", "Afficher dans l’Explorateur", "Afficher dans le gestionnaire de fichiers"),
     ("ru", "Показать в Проводнике", "Показать в файловом менеджере"),
+    ("ar", "الإظهار في المستكشف", "الإظهار في مدير الملفات"),
 ];
 
 pub(crate) fn label<'a>(app: &EffectcraftApp, command: &str, source: &'a str) -> &'a str {
@@ -221,6 +291,7 @@ fn menu_catalog(language: &str) -> Option<&'static [(&'static str, &'static str,
         "pl" => POLISH,
         "ka" => GEORGIAN,
         "sv" => SWEDISH,
+        "ar" => arabic::MENUS,
         _ => return None,
     })
 }
@@ -298,6 +369,8 @@ pub(crate) fn entry(app: &EffectcraftApp, e: &MenuEntry, shown: String) -> Strin
         // A colon before the history's (untranslated) action name: "Отменить: Comp1".
         "ru" => Some(("Отменить:", "Нечего отменять", "Повторить:", "Нечего повторять")),
         "sv" => Some(("Ångra", "Det går inte att ångra", "Gör om", "Det går inte att göra om")),
+        // A colon before the history's action name: "تراجع: Comp1".
+        "ar" => Some(("تراجع:", "لا يوجد ما يمكن التراجع عنه", "إعادة:", "لا يوجد ما يمكن إعادته")),
         _ => None,
     };
     match e.command.as_str() {
@@ -448,6 +521,17 @@ pub(crate) fn submenu(app: &EffectcraftApp, source: &str, shown: String) -> Stri
                 && let Some(name) = shown.strip_prefix("Assign Shortcut to “").and_then(|s| s.strip_suffix('”'))
             {
                 return format!("Tilldela kortkommando till 3D-vyn ”{name}”");
+            }
+        }
+        "ar" => {
+            if source == "Assign Shortcut to Workspace" {
+                if let Some(name) = shown.strip_prefix("Assign Shortcut to “").and_then(|s| s.strip_suffix("” Workspace")) {
+                    return format!("تعيين اختصار لمساحة العمل «{name}»");
+                }
+            } else if source == "Assign Shortcut to 3D View"
+                && let Some(name) = shown.strip_prefix("Assign Shortcut to “").and_then(|s| s.strip_suffix('”'))
+            {
+                return format!("تعيين اختصار للعرض ثلاثي الأبعاد «{name}»");
             }
         }
         _ => {}
@@ -9141,6 +9225,20 @@ mod tests {
         assert!(!japanese(&app));
     }
 
+    /// Text no panel routes through the catalog is still translated when drawn: as it stands, with
+    /// a form's colon or ellipsis, as a menu path, and around a number. Unknown text is left alone.
+    #[test]
+    fn drawn_text_finds_the_row_behind_the_form_it_is_drawn_in() {
+        ui::set_current("ar");
+        assert_eq!(drawn_text("Paragraph").as_deref(), Some("الفقرة"));
+        assert_eq!(drawn_text("Opacity:").as_deref(), Some("العتامة:"));
+        assert_eq!(drawn_text("File ▸ Import").as_deref(), Some("ملف ▸ استيراد"));
+        assert_eq!(drawn_text("5.0 per second").as_deref(), Some("5.0 في الثانية"));
+        assert_eq!(drawn_text("My Shot 3"), None);
+        ui::set_current("en");
+        assert_eq!(drawn_text("Paragraph"), None);
+    }
+
     #[test]
     fn every_translated_entry_keeps_the_english_shape() {
         for (code, catalog) in [
@@ -9153,6 +9251,7 @@ mod tests {
             ("pl", POLISH),
             ("ka", GEORGIAN),
             ("sv", SWEDISH),
+            ("ar", arabic::MENUS),
         ] {
             for (command, en, translated) in catalog {
                 assert_eq!(en.contains("..."), translated.contains("..."), "{code} {command} / {en}: {translated}");

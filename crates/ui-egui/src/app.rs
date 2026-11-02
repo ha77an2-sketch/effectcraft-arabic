@@ -147,6 +147,8 @@ impl eframe::App for EffectcraftApp {
     /// a batch), then prepare pointer wrapping; ending a numeric scrub clears the history merge key so the next edit
     /// starts a new undo step.
     fn raw_input_hook(&mut self, ctx: &egui::Context, raw_input: &mut egui::RawInput) {
+        // Before anything is added: forwarded and synthetic input is already logical.
+        crate::rtl::mirror_input(ctx, raw_input);
         raw_input.events.append(&mut self.forwarded.events);
         raw_input.dropped_files.append(&mut self.forwarded.files);
         let injected = self.synthetic_in_flight || !self.synthetic.is_empty();

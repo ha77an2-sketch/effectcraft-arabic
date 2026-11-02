@@ -45,10 +45,10 @@ impl EffectcraftApp {
 }
 
 pub(crate) fn check(app: &mut EffectcraftApp) {
+    // Upstream's update feed would replace this edition with its English build.
     #[cfg(not(target_arch = "wasm32"))]
-    {
-        app.updates_rt.check_requested = true;
-        app.updates_rt.manual_window_open = true;
+    if let Err(e) = app.session.execute("help.github", serde_json::json!({})) {
+        app.ui.status = e.to_string();
     }
     #[cfg(target_arch = "wasm32")]
     {

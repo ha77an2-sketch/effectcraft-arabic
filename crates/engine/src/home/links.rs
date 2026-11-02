@@ -5,9 +5,9 @@ pub const APP_NAME: &str = "EffectCraft";
 pub const APP_SLUG: &str = "effectcraft";
 pub const DISCORD: &str = "https://discord.gg/artcraft";
 pub const WEBSITE: &str = "https://getartcraft.com";
-pub const APP_PAGE: &str = "https://getartcraft.com/apps/effectcraft";
-pub const GITHUB: &str = "https://github.com/storytold/effectcraft";
-pub const ISSUES: &str = "https://github.com/storytold/effectcraft/issues";
+pub const APP_PAGE: &str = "https://github.com/ha77an2-sketch/effectcraft-arabic";
+pub const GITHUB: &str = "https://github.com/ha77an2-sketch/effectcraft-arabic";
+pub const ISSUES: &str = "https://github.com/ha77an2-sketch/effectcraft-arabic/issues";
 
 /// Sibling apps of the ArtCraft family: (name, what it is, GitHub repo, app page).
 pub const SIBLINGS: &[(&str, &str)] = &[

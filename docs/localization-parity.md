@@ -56,8 +56,12 @@ interface; Arabic and Hebrew text *in layers* is supported through its Middle Ea
 - **Fonts:** no bundled CJK font; the UI installs system fallbacks probed by script (Kana, Han,
   Arabic, Hebrew, Devanagari, Bengali, Gurmukhi, Gujarati, Tamil, Telugu, Kannada, Malayalam,
   Thai and Hangul: `crates/ui-egui/src/theme.rs`; the Hangul probe was added for #599, closed). The web build has no system fonts.
-- **Script support in the interface:** egui draws text without complex shaping or right-to-left
-  layout, so an Arabic or Hindi interface would render unshaped and left to right. **In text
+- **Right-to-left interface:** `crates/ui-egui/src/rtl.rs` mirrors the whole window at its two ends
+  (pointer input in, finished paint lists out), so panels keep their usual coordinates. Timelines,
+  viewers and transport controls call `rtl::keep` to stay left to right. Setting
+  `EFFECTCRAFT_TEXT_AUDIT=<file>` appends all Latin text drawn in an Arabic session to that file.
+- **Script support in the interface:** the egui fork shapes Arabic; other complex scripts in the
+  interface have not been qualified. **In text
   layers** (`crates/text`) shaping (harfrust), bidi (UAX #9), vertical text and Tate-Chu-Yoko
   work; text-layer typing goes through the IME (`viewer_text.rs` handles preedit and commit).
 
@@ -79,7 +83,7 @@ counted, so the true percentages are slightly lower.
 | Simplified Chinese | `zh-hans` | 1,935 (≈ 46%): menus 630 rows, panels 998, effect names 307 | Panels and dialogs partly; no help, effect names translated and their parameter names not; Home screen literals unwrapped (#574, closed) | System CJK fallback; Han follows the UI language; CJK text in comps renders wrongly (#453); IME in text layers | no | partial | 6–9 h + review |
 | Spanish | `es` | 1,142 (≈ 29%): menus 629 rows, panels 513 | Menus only; the panel catalog from #996 | Latin, fine | no | partial | 9–12 h + review |
 | Hindi | `hi` | 0 | — | UI: Devanagari fallback font but no shaping; text layers shape Devanagari | no | none (After Effects: none) | 9–13 h + shaping in the UI |
-| Arabic | `ar` | 0 | — | UI: Arabic fallback font but no shaping and no RTL layout; text layers: bidi + shaping | no | none (After Effects: none) | 9–13 h + 15–25 h RTL UI |
+| Arabic | `ar` | ≈ 3,900 rows: menus 632, panels and effect parameters ≈ 3,790, effect names 308 + 21 categories | Panels, dialogs, effect parameters and popup options; text no panel routes through `tr` is matched as it is drawn (`i18n::drawn_text`); engine error messages and help mostly English | Shaped by the egui fork with a 1.2× Arabic face (system font: none on the web build); the window is mirrored (`crates/ui-egui/src/rtl.rs`) except time-based views and pictures | no | partial; AI-written, needs native review (After Effects: none) | Native review, remaining engine messages |
 | French | `fr` | 2,124 (≈ 51%): menus 632 rows, panels 1,184, effect names 308 | Panels and dialogs at the source list of the other panel catalogs; effect names and their 21 categories; no help; machine-translated from the English, not yet native-speaker proofread | Latin, fine | no | partial | 2–4 h + review |
 | Portuguese (Brazil) | `pt-br` | 1,324 (≈ 34%): menus 629 rows, panels 695 | Panels and dialogs at the Chinese catalogs' source list; the six keys main added after that count are translated too; AI-assisted, not yet native-speaker proofread | Latin, fine | no | partial | independent native review |
 | Indonesian | `id` | 0 | — | Latin, fine | no | none (After Effects: none) | 8–12 h + review |

@@ -60,6 +60,8 @@ pub fn show(app: &mut EffectcraftApp, ui: &mut egui::Ui, rect: Rect) {
     p.rect_filled(Rect::from_min_max(pos2(rect.min.x, ruler.min.y - 4.0), rect.max), 0.0, t.panel_bg);
     // Canvas.
     let area = Rect::from_min_max(pos2(rect.min.x, top.max.y), pos2(rect.max.x, ruler.min.y - 4.0));
+    // The picture, its ruler and its transport keep their direction.
+    crate::rtl::keep(ui, Rect::from_min_max(area.min, pos2(rect.max.x, edit_row.min.y)));
     if let Some(f) = &footage
         && f.has_video
     {

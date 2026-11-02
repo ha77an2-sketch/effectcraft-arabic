@@ -40,6 +40,8 @@ pub fn preview(app: &mut EffectcraftApp, ui: &mut egui::Ui, rect: Rect) {
         (Icon::Last, "time.end", "Last Frame"),
     ];
     let current = app.session.prefs.preview.current;
+    // Play points the way time runs, in every interface language.
+    crate::rtl::keep(ui, Rect::from_min_size(pos2(x, y), vec2(total, 28.0)).intersect(rect));
     for (icon, cmd, tip) in buttons {
         let r = Rect::from_min_size(pos2(x, y), vec2(bw, 28.0));
         let icon = if cmd == "playback.toggle" && app.playback.playing { Icon::Pause } else { icon };

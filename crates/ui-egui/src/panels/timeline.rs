@@ -1808,6 +1808,8 @@ fn begin_rows(app: &mut EffectcraftApp, ui: &mut egui::Ui, tl: Tl) -> Rw {
     let rows_rect = tl.rows_rect;
     let graph_x0 = tl.graph_x0;
     let rect = tl.rect;
+    // Time runs left to right in every interface language.
+    crate::rtl::keep(ui, Rect::from_min_max(tl.ruler.min, pos2(rect.max.x, rows_rect.max.y)));
     let lp = tl.p.with_clip_rect(rows_rect.intersect(Rect::from_min_max(rows_rect.min, pos2(graph_x0 - 1.0, rows_rect.max.y))));
     let gp = tl.p.with_clip_rect(rows_rect.intersect(Rect::from_min_max(pos2(graph_x0, rows_rect.min.y), rows_rect.max)));
     let graph_on = app.ui.timeline.graph_editor;
@@ -3053,7 +3055,8 @@ fn layer_mode_cell(app: &mut EffectcraftApp, ui: &mut egui::Ui, g: &mut Rw, rc: 
     }
     let opts: Vec<String> =
         BlendMode::ALL.iter().flat_map(|m| if m.ends_group() { vec![m.label().to_string(), "-".to_string()] } else { vec![m.label().to_string()] }).collect();
-    if let Some(i) = widgets::popup_menu(ui, pop, mr.left_bottom(), &opts, opts.iter().position(|o| o == layer.blend_mode.label())) {
+    // The command takes the English mode name; only the list is drawn translated.
+    if let Some(i) = widgets::popup_menu(ui, pop, mr.left_bottom(), &crate::i18n::tr_all(&opts), opts.iter().position(|o| o == layer.blend_mode.label())) {
         actions.push(("layer.setBlendMode".into(), json!({"layers": video_targets(&comp, layer.id, selected), "mode": opts[i]})));
     }
     let tr = Rect::from_center_size(pos2(cw.mode + 76.0 + 6.0, cy), vec2(14.0, 14.0));
@@ -3676,7 +3679,7 @@ fn expr_controls(app: &mut EffectcraftApp, ui: &mut egui::Ui, g: &mut Rw, rc: &R
     );
     let indent = cw.name + 6.0 + 14.0 * row.depth as f32;
     lp.text(pos2(indent + 12.0, cy), Align2::LEFT_CENTER, crate::i18n::tr("Expression:"), Tokens::ui(11.5), t.text_dim);
-    lp.text(pos2(indent + 82.0, cy), Align2::LEFT_CENTER, &prop.name, Tokens::ui(11.5), t.text);
+    lp.text(pos2(indent + 82.0, cy), Align2::LEFT_CENTER, crate::i18n::tr(&prop.name), Tokens::ui(11.5), t.text);
     // "=" enable switch and the property pick whip (AE's expression controls).
     let en_r = Rect::from_center_size(pos2(cw.switches + 10.0, cy), vec2(16.0, 16.0));
     let en = ui.interact(en_r, egui::Id::unique(("expr-en", uid)), Sense::click()).on_hover_text(crate::i18n::tr("Enable Expression"));
@@ -5816,6 +5819,7 @@ fn enum_editor(app: &mut EffectcraftApp, ui: &mut egui::Ui, ve: &ValueEdit<'_>, 
     let t = app.tokens;
     let x = at.x;
     if let Some(options) = layer.popup_options(prop) {
+        let options = crate::i18n::tr_all(&options);
         let r = Rect::from_min_size(pos2(x, at.y - 9.0), vec2(150.0, 18.0));
         let label = options.get(*i as usize).cloned().unwrap_or_default();
         let pop = egui::Id::unique(("epop", uid));

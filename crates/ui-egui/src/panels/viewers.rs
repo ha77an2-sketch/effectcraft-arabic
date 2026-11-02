@@ -87,6 +87,7 @@ pub fn show(app: &mut EffectcraftApp, ui: &mut egui::Ui, id: u32, rect: Rect) {
     }
     let t = app.tokens;
     let ctx = ui.ctx().clone();
+    crate::rtl::keep(ui, rect);
     let p = ui.painter().with_clip_rect(rect);
     p.rect_filled(rect, 0.0, t.pasteboard);
     let resp = ui.interact(rect, egui::Id::unique(("passive-viewer", id)), Sense::click()).on_hover_text(tr("Click to make this viewer active"));

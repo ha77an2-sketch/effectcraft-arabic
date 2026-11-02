@@ -38,6 +38,7 @@ pub mod native_menu;
 pub mod panels;
 mod pointer_wrap;
 pub mod prefs_live;
+mod rtl;
 pub mod state;
 pub mod theme;
 pub mod updates_ui;

@@ -17,6 +17,7 @@ pub const LANGUAGES: &[(&str, &str)] = &[
     ("日本語", "ja"),
     ("简体中文", "zh-hans"),
     ("繁體中文", "zh-hant"),
+    ("العربية", "ar"),
 ];
 
 /// Settings ▸ Startup & Repair ▸ Window Graphics: (label, `startup.windowGraphics` value).

@@ -195,7 +195,13 @@ fn prop_row(
     };
     let name_clip = Rect::from_min_max(pos2(swr.max.x + 6.0, r.min.y), pos2(vx - 6.0, r.max.y));
     app.auto.add(&format!("effectControls.prop.{uid}.name"), name_clip, &prop.name);
-    p.with_clip_rect(name_clip.intersect(p.clip_rect())).text(pos2(swr.max.x + 6.0, cy), Align2::LEFT_CENTER, &prop.name, Tokens::ui(12.0), t.text);
+    p.with_clip_rect(name_clip.intersect(p.clip_rect())).text(
+        pos2(swr.max.x + 6.0, cy),
+        Align2::LEFT_CENTER,
+        crate::i18n::tr(&prop.name),
+        Tokens::ui(12.0),
+        t.text,
+    );
     let name_response = ui.interact(name_clip, egui::Id::unique(("ec-prop-name", uid)), Sense::click());
     if name_response.double_clicked() {
         app.ui.timeline.search.clear();
@@ -381,7 +387,7 @@ fn value_toggle(app: &mut EffectcraftApp, ui: &mut egui::Ui, cx: &PropCx, value:
     if widgets::checkbox(ui, cr, *b, &t, egui::Id::unique(("ec-b", uid))).changed() {
         cx.set_step(actions, json!(!b));
     }
-    p.text(pos2(cr.max.x + 6.0, cy), Align2::LEFT_CENTER, &prop.name, Tokens::ui(12.0), t.text_dim);
+    p.text(pos2(cr.max.x + 6.0, cy), Align2::LEFT_CENTER, crate::i18n::tr(&prop.name), Tokens::ui(12.0), t.text_dim);
     app.auto.add(&format!("effectControls.prop.{uid}.value"), cr, &prop.name);
 }
 
@@ -391,6 +397,7 @@ fn value_popup(app: &mut EffectcraftApp, ui: &mut egui::Ui, cx: &PropCx, value: 
     };
     let PropCx { t, uid, cy, vx, r, p, prop, .. } = *cx;
     if let ParamUi::Popup { options } = &prop.ui {
+        let options = crate::i18n::tr_all(options);
         let widest = options.iter().map(|o| p.layout_no_wrap(o.clone(), Tokens::ui(11.5), t.text).size().x).fold(0.0, f32::max);
         let dr = Rect::from_min_size(pos2(vx, cy - 9.0), vec2((widest + 30.0).clamp(80.0, (r.max.x - vx - 56.0).max(80.0)), 18.0));
         let pop = egui::Id::unique(("ec-epop", uid));
@@ -398,7 +405,7 @@ fn value_popup(app: &mut EffectcraftApp, ui: &mut egui::Ui, cx: &PropCx, value: 
             widgets::open_popup(ui, pop);
         }
         app.auto.add(&format!("effectControls.prop.{uid}.value"), dr, &prop.name);
-        if let Some(ni) = widgets::popup_menu(ui, pop, dr.left_bottom(), options, Some(*i as usize)) {
+        if let Some(ni) = widgets::popup_menu(ui, pop, dr.left_bottom(), &options, Some(*i as usize)) {
             cx.set_step(actions, json!(ni));
         }
     }
@@ -419,7 +426,7 @@ fn value_layer_ref(app: &mut EffectcraftApp, ui: &mut egui::Ui, cx: &PropCx, val
         // Source / Masks / Effects & Masks (the hidden companion parameter).
         if let Some(src) = group.get(&effectcraft_engine::effects::layer_source_id(&prop.match_id)) {
             let si = src.value.as_enum() as usize;
-            let opts: Vec<String> = effectcraft_engine::effects::LAYER_SOURCE_OPTIONS.iter().map(|s| s.to_string()).collect();
+            let opts: Vec<String> = effectcraft_engine::effects::LAYER_SOURCE_OPTIONS.iter().map(|s| crate::i18n::tr(s).to_string()).collect();
             let sr = Rect::from_min_size(pos2(dr.max.x + 6.0, cy - 9.0), vec2(((r.max.x - dr.max.x) - 64.0).clamp(70.0, 120.0), 18.0));
             let spop = egui::Id::unique(("ec-lspop", uid));
             if widgets::dropdown(ui, sr, opts.get(si).map(String::as_str).unwrap_or(""), &t, egui::Id::unique(("ec-ls", uid))).clicked() {
@@ -721,7 +728,7 @@ pub(super) fn group_rows(
                     if widgets::twirl(ui, tw, open, egui::Id::unique(("ec-g", sg.uid)), &t).clicked() {
                         toggle_closed(app, sg, open, ui.input(|i| i.modifiers.alt || i.modifiers.command));
                     }
-                    let name = p.text(pos2(tw.max.x + 6.0, r.center().y), Align2::LEFT_CENTER, &sg.name, Tokens::ui(12.0), t.text);
+                    let name = p.text(pos2(tw.max.x + 6.0, r.center().y), Align2::LEFT_CENTER, crate::i18n::tr(&sg.name), Tokens::ui(12.0), t.text);
                     app.auto.add(&format!("effectControls.group.{}.name", sg.uid), name, &sg.name);
                 }
                 if open {

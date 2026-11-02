@@ -263,6 +263,8 @@ pub fn show(app: &mut EffectcraftApp, ui: &mut egui::Ui, rect: Rect) {
     let bar = Rect::from_min_max(pos2(rect.min.x, rect.max.y - 30.0), rect.max);
     let canvas_bottom = if roto.is_some() { bar.min.y - 18.0 } else { bar.min.y };
     let area = Rect::from_min_max(pos2(rect.min.x, top.max.y), pos2(rect.max.x, canvas_bottom));
+    // The picture and the Roto Brush span under it keep their direction.
+    crate::rtl::keep(ui, Rect::from_min_max(area.min, pos2(rect.max.x, bar.min.y)));
     // The layer's effect bounds, in effect space (where paint and Roto Brush strokes are).
     let [lw, lh] = effectcraft_engine::render::effect_bounds(&app.session.project, &comp, &layer).0;
     let fit = ((area.width() - 40.0) as f64 / lw).min((area.height() - 40.0) as f64 / lh).max(0.01) as f32;

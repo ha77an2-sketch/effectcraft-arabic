@@ -397,6 +397,10 @@ const SCRIPT_PROBES: &[(char, &str)] = &[
     ('ა', "georgian-system"),
 ];
 
+/// How much larger than the row's font an Arabic interface draws Arabic letters.
+#[cfg(not(target_arch = "wasm32"))]
+const ARABIC_UI_SCALE: f32 = 1.2;
+
 /// The size the fallback baseline correction is derived at. The correction is an em fraction, so the
 /// value holds at every interface size; any size in the interface's range gives the same answer.
 #[cfg(not(target_arch = "wasm32"))]
@@ -515,6 +519,11 @@ fn install_script_fallbacks(family_fonts: &mut FontDefinitions, language: &str) 
             data.index = face.info.index;
             let name = if name == "catalog-system" { format!("{name}-{:x}", probe as u32) } else { name.to_string() };
             data.tweak = baseline_tweak(&base_face, &face);
+            // Arabic letters sit small on Latin metrics; at the interface's 12 px they need the
+            // extra size to stay legible next to Inter.
+            if name == "arabic-system" && crate::i18n::right_to_left(language) {
+                data.tweak.scale = ARABIC_UI_SCALE;
+            }
             family_fonts.font_data.insert(name.clone(), Arc::new(data));
             for family in family_fonts.families.values_mut() {
                 family.push(name.to_string());

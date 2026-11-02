@@ -1,18 +1,17 @@
 <p align="center">
-  <a href="https://getartcraft.com/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/brand/artcraft-logo-white.svg">
-      <img alt="ArtCraft" src="docs/brand/artcraft-logo.svg" width="200">
-    </picture>
-  </a>
-</p>
-
-
-<p align="center">
   <img src="assets/app-icon/hicolor/256x256/apps/ai.storyteller.effectcraft.png" width="128" height="128" alt="EffectCraft icon: an engraved unicorn on a pink tile">
 </p>
 
-<h1 align="center">EffectCraft</h1>
+<h1 align="center">EffectCraft — Arabic Edition</h1>
+
+<p align="center" dir="rtl">
+  <b>نسخة عربية غير رسمية من EffectCraft، بواجهة كاملة من اليمين إلى اليسار.</b><br>
+  هذه النسخة مبنية على EffectCraft من فريق ArtCraft، وهم لا يصنعونها ولا يدعمونها.
+</p>
+
+<p align="center">
+  Unofficial Arabic edition of EffectCraft. Based on EffectCraft by the ArtCraft team, who do not make, endorse or support it.
+</p>
 
 <p align="center">
   <b>Motion graphics and visual effects; an open-source, professional motion graphics and visual effects studio, built in pure Rust.</b>
@@ -388,15 +387,8 @@ Copyright (c) 2026 ArtCraft Team and the EffectCraft contributors. Required noti
 Bundled fonts, icons, images and other assets keep their own open licenses; each one is listed
 with its author, source and license in [ATTRIBUTION.md](ATTRIBUTION.md).
 
-The ArtCraft name, wordmark and logos in [`docs/brand/`](docs/brand/) are trademarks of the
-ArtCraft Team and are not covered by this license. They may be used only unmodified, and only as
-part of this repository and EffectCraft, under [`docs/brand/LICENSE-brand.txt`](docs/brand/LICENSE-brand.txt).
-Forks and modified versions must remove them.
-
-<p align="center">
-  <a href="https://getartcraft.com/"><img alt="ArtCraft" src="docs/brand/artcraft-mark.svg" width="28"></a><br>
-  <sub>Made by the <a href="https://getartcraft.com/">ArtCraft</a> team and community.</sub>
-</p>
+This edition ships none of the ArtCraft Team's logos, as their brand terms require of modified versions.
+The ArtCraft name is a trademark of the ArtCraft Team and is used here only to say what this work is based on.
 
 ## Star history
 

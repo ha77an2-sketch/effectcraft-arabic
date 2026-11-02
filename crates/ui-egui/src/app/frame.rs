@@ -267,6 +267,13 @@ impl EffectcraftApp {
         panels::viewer_text::install_hooks(ctx);
         let language = crate::i18n::language(self);
         crate::i18n::set_current(language);
+        crate::rtl::set_active(ctx, crate::i18n::right_to_left(language));
+        if crate::i18n::right_to_left(language) {
+            let project = &self.session.project;
+            let items = project.items.values().map(|item| item.name.clone());
+            let layers = project.comps().flat_map(|(_, comp)| comp.layers.iter().map(|layer| layer.name.clone()));
+            crate::rtl::set_user_names(ctx, items.chain(layers).collect());
+        }
         if (!self.styled || self.styled_language != language) && self.synthetic_in_flight {
             // The install needs a pass that draws nothing, but this pass has already applied a
             // synthetic batch: defer the theme/font install by one pass instead of dropping the

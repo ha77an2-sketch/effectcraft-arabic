@@ -259,7 +259,12 @@ fn main() -> eframe::Result {
                 }
                 session.config = Some(std::sync::Arc::new(effectcraft_engine::config::DirConfig::new(dir)));
             }
+            // A first launch opens in Arabic; Settings ▸ General ▸ Language changes it afterwards.
+            let first_launch = session.config.as_deref().is_some_and(|c| c.read(effectcraft_engine::prefs::PREFS_FILE).is_none());
             session.load_settings();
+            if first_launch {
+                session.prefs.general.language = "ar".into();
+            }
             // Fit the window to its monitor, or put it back where it was (still hidden).
             let saved_window = session.config.as_deref().and_then(window::load);
             let opened = cc.winit_window().map(|w| window::restore(w, saved_window));
@@ -286,7 +291,8 @@ fn main() -> eframe::Result {
             // reported in a toast and forgotten).
             let _ = session.execute("window.restoreScriptPanels", json!({}));
             let mut app = EffectcraftApp::new(session);
-            app.set_startup_update_check(true);
+            // No check at start: the update feed is upstream's English build, which would replace
+            // this edition. Help ▸ Check for Updates opens this edition's own page instead.
             app.set_gpu_failure_bridge(gpu_failures);
             app.ui.start_screen = show_home;
             if let Some(n) = notice {
@@ -427,7 +433,7 @@ fn device_limits(adapter: eframe::wgpu::Limits) -> eframe::wgpu::Limits {
 fn startup_failed(e: &eframe::Error, gl_next: bool) {
     let next = if gl_next { "The next launch will try OpenGL instead. " } else { "" };
     let message = format!(
-        "EffectCraft couldn't start its window: {e}\n\n{next}Updating the graphics driver often helps. If it keeps happening, please report it at https://github.com/storytold/effectcraft/issues with this message."
+        "EffectCraft couldn't start its window: {e}\n\n{next}Updating the graphics driver often helps. If it keeps happening, please report it at https://github.com/ha77an2-sketch/effectcraft-arabic/issues with this message."
     );
     // Standard error and the session log; standard error alone when RUST_LOG turned errors off.
     if log::log_enabled!(log::Level::Error) {

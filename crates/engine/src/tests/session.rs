@@ -494,7 +494,7 @@ fn help_links_emit_urls() {
     let r = s.execute("help.discord", json!({})).unwrap();
     assert_eq!(r["url"], "https://discord.gg/artcraft");
     assert!(s.drain_events().iter().any(|e| matches!(e, crate::Event::OpenUrl(u) if u.contains("discord"))));
-    assert_eq!(s.execute("help.github", json!({})).unwrap()["url"], "https://github.com/storytold/effectcraft");
+    assert_eq!(s.execute("help.github", json!({})).unwrap()["url"], "https://github.com/ha77an2-sketch/effectcraft-arabic");
 }
 
 /// Every Help ▸ documentation page opens a file that is in the repository (#2696: Expression Reference opened a 404).
@@ -505,7 +505,7 @@ fn help_docs_pages_exist_in_the_repository() {
         let mut s = Session::default();
         let params = page.map_or_else(|| json!({}), |p| json!({"page": p}));
         let url = s.execute("help.docs", params).unwrap()["url"].as_str().unwrap().to_owned();
-        let path = url.strip_prefix("https://github.com/storytold/effectcraft/blob/main/").unwrap_or_else(|| panic!("{page:?}: {url}"));
+        let path = url.strip_prefix("https://github.com/ha77an2-sketch/effectcraft-arabic/blob/main/").unwrap_or_else(|| panic!("{page:?}: {url}"));
         assert!(root.join(path).is_file(), "{page:?} opens {url}, which is not in the repository");
     }
 }
