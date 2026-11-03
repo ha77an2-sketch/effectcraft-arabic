@@ -11,7 +11,7 @@
   "extensions": [],
   "payloads": [
     "NOTICE",
-    "effectcraft-arabic.exe",
+    "effectcraft.exe",
     "effectcraft-cli.exe"
   ],
   "registry": [
