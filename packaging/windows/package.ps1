@@ -56,10 +56,17 @@ if (-not $env:EFFECTCRAFT_BUILD_DATE) { $env:EFFECTCRAFT_BUILD_DATE = (Get-Date)
 Write-Output "EffectCraft $Version for Windows $Arch ($Target)"
 
 if (-not $SkipBuild) {
-  # Static CRT: no VC++ redistributable needed. Scoped to the target so host build scripts and
-  # proc-macros are unaffected.
-  $flagVar = 'CARGO_TARGET_' + ($Target.ToUpper() -replace '-', '_') + '_RUSTFLAGS'
-  [Environment]::SetEnvironmentVariable($flagVar, '-C target-feature=+crt-static')
+  # Static CRT: no VC++ redistributable needed. With --target these flags reach only the target,
+  # so host build scripts and proc-macros are unaffected. The remaps keep the build machine's user
+  # and folder names out of the shipped binaries (panic locations embed source paths). Encoded
+  # flags are split on 0x1F, so paths may contain spaces.
+  $env:CARGO_ENCODED_RUSTFLAGS = @(
+    '-C', 'target-feature=+crt-static',
+    "--remap-path-prefix=$env:USERPROFILE\.cargo=~/.cargo",
+    "--remap-path-prefix=$env:USERPROFILE\.rustup=~/.rustup",
+    "--remap-path-prefix=$Root=effectcraft",
+    "--remap-path-prefix=$env:USERPROFILE=~"
+  ) -join [char]0x1F
   # Fail the build (rather than warn) if the icon/VERSIONINFO can't be embedded.
   $env:EFFECTCRAFT_REQUIRE_WINRES = '1'
   Invoke-Native "cargo build ($Target)" { cargo build --release --locked -p effectcraft -p effectcraft-cli --target $Target }
