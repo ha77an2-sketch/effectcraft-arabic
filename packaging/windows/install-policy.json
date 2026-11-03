@@ -1,7 +1,7 @@
 {
   "id": "effectcraft",
-  "name": "EffectCraft",
-  "upgradeCode": "AACA8593-C6ED-40A8-BA6C-CB325D8529F9",
+  "name": "EffectCraft Arabic",
+  "upgradeCode": "D0D24012-D6C1-4EAC-86B7-0EE70263C848",
   "sources": [
     "effectcraft.wxs",
     "installer-ui.wxs"
@@ -11,34 +11,35 @@
   "extensions": [],
   "payloads": [
     "NOTICE",
-    "effectcraft-cli.exe",
-    "effectcraft.exe"
+    "effectcraft-arabic.exe",
+    "effectcraft-cli.exe"
   ],
   "registry": [
     [
       "-1",
-      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\effectcraft.exe",
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\effectcraft-arabic.exe",
       "",
       "[#EffectcraftExe]"
     ],
     [
       "-1",
-      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\effectcraft.exe",
+      "Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\effectcraft-arabic.exe",
       "Path",
       "[INSTALLFOLDER]"
     ],
     [
       "-1",
-      "Software\\EffectCraft",
+      "Software\\EffectCraft Arabic",
       "DesktopShortcut",
       "[DESKTOPSHORTCUT]"
     ],
     [
       "-1",
-      "Software\\EffectCraft",
+      "Software\\EffectCraft Arabic",
       "DesktopShortcut",
       "1"
     ]
   ],
-  "mode": "dualScope"
+  "mode": "dualScope",
+  "suite": "ha77an2-sketch"
 }
