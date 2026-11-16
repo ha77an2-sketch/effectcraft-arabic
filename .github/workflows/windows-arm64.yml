@@ -32,6 +32,8 @@ jobs:
     uses: storytold/craft-common-actions/.github/workflows/windows-arm64.yml@main
     with:
       app-name: effectcraft
-      app-dir: EffectCraft
-      install-relative-path: Programs/ArtCraft/EffectCraft
+      # This edition's installer identity (packaging/windows/install-policy.json).
+      app-dir: EffectCraft Arabic
+      main-binary: effectcraft-arabic.exe
+      install-relative-path: Programs/ha77an2-sketch/EffectCraft Arabic
       install-scope: perUser
